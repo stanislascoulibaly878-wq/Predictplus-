@@ -1,0 +1,661 @@
+#<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - PredictPlus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-primary: #1a365d;
+            --color-secondary: #2c5282;
+            --color-accent: #38a169;
+            --color-danger: #e53e3e;
+            --color-warning: #dd6b20;
+            --color-background: #f7fafc;
+            --color-card: #ffffff;
+            --color-text: #2d3748;
+            --color-text-light: #718096;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        .dark-mode {
+            --color-primary: #2c5282;
+            --color-secondary: #1a365d;
+            --color-background: #1a202c;
+            --color-card: #2d3748;
+            --color-text: #e2e8f0;
+            --color-text-light: #a0aec0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--color-card);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            color: var(--color-accent);
+            font-size: 1.8rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--color-primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2f855a;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--color-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Admin Login Form */
+        .admin-login {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--color-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .admin-login h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-text-light);
+            border-radius: var(--radius);
+            font-size: 1rem;
+        }
+
+        /* Admin Dashboard */
+        .admin-dashboard {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-card {
+            background-color: var(--color-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .admin-card h3 {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-card p {
+            color: var(--color-text-light);
+        }
+
+        .admin-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background-color: var(--color-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .action-card h3 {
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* GitHub Deployment Section */
+        .github-section {
+            background-color: var(--color-card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .github-section h3 {
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .steps {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .step-number {
+            background-color: var(--color-primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .code-block {
+            background-color: var(--color-background);
+            border-radius: var(--radius);
+            padding: 1rem;
+            font-family: monospace;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-links {
+            list-style-type: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-wrap: wrap;
+            }
+
+            .nav {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+
+            .nav.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions {
+                margin-left: auto;
+            }
+            
+            .step {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo span {
+                display: none;
+            }
+
+            .admin-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <i class="fas fa-chart-line logo-icon"></i>
+                <span>PredictPlus</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="nav" id="mainNav">
+                <a href="#">Accueil</a>
+                <a href="#">Football</a>
+                <a href="#">Tennis</a>
+                <a href="#">Basketball</a>
+                <a href="#">Combo du Jour</a>
+                <a href="#">Stats</a>
+                <a href="#">Blog</a>
+            </nav>
+
+            <div class="user-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn btn-outline" id="logoutBtn" style="display:none;">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Login Form -->
+    <section class="admin-login" id="adminLogin">
+        <h2><i class="fas fa-lock"></i> Connexion Administrateur</h2>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Votre email administrateur">
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" placeholder="Votre mot de passe">
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="login()">Se connecter</button>
+        <p id="loginMessage" style="margin-top:1rem;text-align:center;color:var(--color-danger);"></p>
+    </section>
+
+    <!-- Admin Dashboard -->
+    <section class="admin-dashboard container" id="adminDashboard">
+        <div class="admin-header">
+            <h2>Tableau de bord administrateur</h2>
+            <p>Connecté en tant que: <strong id="adminEmail"></strong></p>
+        </div>
+
+        <div class="admin-cards">
+            <div class="admin-card">
+                <h3>152</h3>
+                <p>Pronostics actifs</p>
+            </div>
+            <div class="admin-card">
+                <h3>78%</h3>
+                <p>Taux de réussite</p>
+            </div>
+            <div class="admin-card">
+                <h3>2,548</h3>
+                <p>Utilisateurs actifs</p>
+            </div>
+            <div class="admin-card">
+                <h3>324</h3>
+                <p>Abonnés premium</p>
+            </div>
+        </div>
+
+        <div class="admin-actions">
+            <div class="action-card">
+                <h3><i class="fas fa-plus-circle"></i> Ajouter un pronostic</h3>
+                <div class="prediction-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sport">Sport</label>
+                            <select id="sport" class="form-control">
+                                <option value="football">Football</option>
+                                <option value="tennis">Tennis</option>
+                                <option value="basketball">Basketball</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="league">Ligue/Compétition</label>
+                            <input type="text" id="league" placeholder="Ex: Ligue 1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="teamA">Équipe à domicile</label>
+                            <input type="text" id="teamA" placeholder="Ex: PSG">
+                        </div>
+                        <div class="form-group">
+                            <label for="teamB">Équipe à l'extérieur</label>
+                            <input type="text" id="teamB" placeholder="Ex: Marseille">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="predictionType">Type de pronostic</label>
+                            <select id="predictionType">
+                                <option value="1X2">1X2</option>
+                                <option value="BTTS">Les deux équipes marquent</option>
+                                <option value="Over/Under">Over/Under</option>
+                                <option value="Double Chance">Double Chance</option>
+                                <option value="Handicap">Handicap</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="predictionValue">Valeur du pronostic</label>
+                            <input type="text" id="predictionValue" placeholder="Ex: Victoire PSG">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="odds">Côte</label>
+                            <input type="number" id="odds" step="0.01" placeholder="Ex: 1.85">
+                        </div>
+                        <div class="form-group">
+                            <label for="confidence">Niveau de confiance</label>
+                            <select id="confidence">
+                                <option value="1">1 étoile</option>
+                                <option value="2">2 étoiles</option>
+                                <option value="3" selected>3 étoiles</option>
+                                <option value="4">4 étoiles</option>
+                                <option value="5">5 étoiles</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="matchTime">Date et heure du match</label>
+                        <input type="datetime-local" id="matchTime">
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis">Analyse (optionnel)</label>
+                        <textarea id="analysis" rows="3" placeholder="Analyse détaillée..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPremium"> Pronostic premium
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="addPrediction()">Ajouter le pronostic</button>
+                    <p id="formMessage" style="margin-top:1rem;text-align:center;"></p>
+                </div>
+            </div>
+
+            <div class="action-card">
+                <h3><i class="fas fa-cog"></i> Actions rapides</h3>
+                <div style="display: grid; gap: 0.5rem;">
+                    <button class="btn btn-outline" onclick="viewPredictions()">Voir tous les pronostics</button>
+                    <button class="btn btn-outline" onclick="manageUsers()">Gérer les utilisateurs</button>
+                    <button class="btn btn-outline" onclick="viewSubscriptions()">Voir les abonnements</button>
+                    <button class="btn btn-outline" onclick="viewStats()">Voir les statistiques</button>
+                    <button class="btn btn-danger" onclick="logout()">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Deployment Section -->
+        <div class="github-section">
+            <h3><i class="fab fa-github"></i> Déploiement sur GitHub Pages</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Créer un compte GitHub</h4>
+                        <p>Si vous n'avez pas de compte, allez sur <a href="https://github.com/" target="_blank">github.com</a> et créez-en un.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Créer un nouveau dépôt</h4>
+                        <p>Cliquez sur le bouton "New repository" et nommez-le <strong>votre-nom-utilisateur.github.io</strong> (remplacez par votre nom d'utilisateur GitHub).</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Télécharger les fichiers</h4>
+                        <p>Cliquez sur "Add file" → "Upload files" et téléchargez tous les fichiers de votre site web.</p>
+                        <p class="code-block"># Le fichier principal doit s'appeler index.html</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Activer GitHub Pages</h4>
+                        <p>Allez dans Settings → Pages → Source, sélectionnez "main" branch et cliquez "Save".</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-c This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
